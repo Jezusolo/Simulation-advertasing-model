@@ -43,10 +43,10 @@ class CustomerAgent:
             fl = 0.0
         elif self.is_client:
             il = self.interest_level   # clients keep high interest as brand advocates
-            fl = max(0.0, self.fatigue_level - 0.02)
+            fl = max(0.0, self.fatigue_level - 0.03)
         else:
             il = self.interest_level - 0.02
-            fl = self.fatigue_level  - 0.02
+            fl = self.fatigue_level  - 0.03
 
         # 2. Opinion Dynamics Threshold spread
         if neighbor_interests:
@@ -551,6 +551,19 @@ with tab_cmp:
                     all_clients.append(m.history_clients)
                     all_interest.append(m.history_interest)
                     all_fatigue.append(m.history_fatigue)
+
+                def _pad_to_same_length(list_of_histories):
+                    max_len = max(len(h) for h in list_of_histories)
+                    padded = []
+                    for h in list_of_histories:
+                        if len(h) < max_len:
+                            h = list(h) + [h[-1]] * (max_len - len(h))
+                        padded.append(h)
+                    return padded
+
+                all_clients = _pad_to_same_length(all_clients)
+                all_interest = _pad_to_same_length(all_interest)
+                all_fatigue = _pad_to_same_length(all_fatigue)
 
                 params = dict(N=N, k=k, beta=beta,
                               opinion_threshold=opinion_threshold,
